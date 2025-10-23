@@ -47,6 +47,26 @@ ffmpeg -loop 1 -i image.png -i output/chorus.mp3 -c:v libx264 -c:a aac -b:a 192k
 ffmpeg -loop 1 -i image.png -i clip.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -shortest -pix_fmt yuv420p output.mp4
 ```
 
+## Concatenating Multiple Videos
+
+Use ffmpeg to combine multiple video files into a single output:
+
+```bash
+ffmpeg -i video1.mp4 -i video2.mp4 \
+  -filter_complex "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]" \
+  -map "[v]" -map "[a]" output.mp4
+```
+
+This command:
+- Takes two input videos (`video1.mp4` and `video2.mp4`)
+- Uses the `concat` filter to join them sequentially
+- `n=2`: specifies 2 input files
+- `v=1:a=1`: outputs 1 video stream and 1 audio stream
+- Both video and audio tracks are concatenated seamlessly
+- Outputs the combined result to `output.mp4`
+
+You can extend this to concatenate more videos by adding more inputs and adjusting the `n=` parameter accordingly.
+
 ## Requirements
 
 - Node.js
@@ -55,4 +75,4 @@ ffmpeg -loop 1 -i image.png -i clip.mp3 -c:v libx264 -tune stillimage -c:a aac -
 Install ffmpeg:
 - macOS: `brew install ffmpeg`
 - Ubuntu: `sudo apt install ffmpeg`
-- Windows: Download from https://ffmpeg.org/# mp-3-tools
+- Windows: Download from https://ffmpeg.org/
